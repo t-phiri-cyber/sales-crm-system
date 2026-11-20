@@ -1,0 +1,83 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Customers | Sales CRM{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <h1>Customers</h1>
+        <p>Manage your customer records and contacts.</p>
+    </div>
+
+    <a href="{{ url_for('add_customer') }}" class="btn">
+        + Add Customer
+    </a>
+</div>
+
+<section class="panel">
+
+    <form method="GET" action="{{ url_for('customers') }}" class="search-form">
+        <input
+            type="search"
+            name="search"
+            placeholder="Search company, contact or email..."
+            value="{{ search }}"
+        >
+        <button type="submit" class="btn">Search</button>
+        <a href="{{ url_for('customers') }}" class="btn secondary">Clear</a>
+    </form>
+
+    {% if customers %}
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>Contact</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Industry</th>
+                    <th>Deals</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td>{{ customer.company_name }}</td>
+                    <td>{{ customer.contact_name }}</td>
+                    <td>{{ customer.email or "—" }}</td>
+                    <td>{{ customer.phone or "—" }}</td>
+                    <td>{{ customer.industry or "—" }}</td>
+                    <td>{{ customer.deal_count }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('edit_customer', customer_id=customer.id) }}"
+                           class="action-link">Edit</a>
+
+                        <form method="POST"
+                              action="{{ url_for('delete_customer', customer_id=customer.id) }}"
+                              onsubmit="return confirm('Delete this customer?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            <button type="submit" class="delete-link">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <p class="empty-state">
+        No customers found. Add a customer to get started.
+    </p>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

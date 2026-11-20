@@ -1,0 +1,74 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Sales Pipeline | Sales CRM{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <h1>Sales Pipeline</h1>
+        <p>Track opportunities, deal values and sales progress.</p>
+    </div>
+
+    <a href="{{ url_for('add_deal') }}" class="btn">
+        + Create Deal
+    </a>
+</div>
+
+<section class="panel">
+
+    {% if deals %}
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Deal Name</th>
+                    <th>Customer</th>
+                    <th>Deal Value</th>
+                    <th>Stage</th>
+                    <th>Expected Close</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for deal in deals %}
+                <tr>
+                    <td>{{ deal.deal_name }}</td>
+                    <td>{{ deal.company_name }}</td>
+                    <td>£{{ "{:,.2f}".format(deal.deal_value) }}</td>
+                    <td>
+                        <span class="stage stage-{{ deal.stage|lower }}">
+                            {{ deal.stage }}
+                        </span>
+                    </td>
+                    <td>{{ deal.expected_close_date or "Not set" }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('edit_deal', deal_id=deal.id) }}"
+                           class="action-link">Edit</a>
+
+                        <form method="POST"
+                              action="{{ url_for('delete_deal', deal_id=deal.id) }}"
+                              onsubmit="return confirm('Delete this deal?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            <button type="submit" class="delete-link">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <p class="empty-state">
+        No deals recorded yet. Create your first sales opportunity.
+    </p>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,102 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Performance Reports | Sales CRM{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <h1>Performance Reports</h1>
+        <p>Analyse sales activity, pipeline performance and customer revenue.</p>
+    </div>
+
+    <a href="{{ url_for('dashboard') }}" class="btn secondary">
+        Back to Dashboard
+    </a>
+</div>
+
+<section class="panel">
+
+    <div class="section-heading">
+        <h2>Sales Pipeline Performance</h2>
+    </div>
+
+    {% if performance %}
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Sales Stage</th>
+                    <th>Number of Deals</th>
+                    <th>Total Deal Value</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in performance %}
+                <tr>
+                    <td>
+                        <span class="stage stage-{{ item.stage|lower }}">
+                            {{ item.stage }}
+                        </span>
+                    </td>
+                    <td>{{ item.deal_count }}</td>
+                    <td>£{{ "{:,.2f}".format(item.total_value) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <p class="empty-state">
+        No sales data available yet. Create deals to generate performance reports.
+    </p>
+
+    {% endif %}
+
+</section>
+
+<section class="panel">
+
+    <div class="section-heading">
+        <h2>Top Customers by Won Revenue</h2>
+    </div>
+
+    {% if top_customers %}
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Total Deals</th>
+                    <th>Won Revenue</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for customer in top_customers %}
+                <tr>
+                    <td>{{ customer.company_name }}</td>
+                    <td>{{ customer.deal_count }}</td>
+                    <td>£{{ "{:,.2f}".format(customer.won_value) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <p class="empty-state">
+        No customer performance data available yet.
+    </p>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

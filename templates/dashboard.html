@@ -1,0 +1,94 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Dashboard | Sales CRM{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <h1>Sales Dashboard</h1>
+        <p>Overview of your customers and sales performance.</p>
+    </div>
+
+    <a href="{{ url_for('add_deal') }}" class="btn">
+        + Create Deal
+    </a>
+</div>
+
+<section class="metrics-grid">
+
+    <div class="metric-card">
+        <p>Total Customers</p>
+        <h2>{{ customers }}</h2>
+    </div>
+
+    <div class="metric-card">
+        <p>Total Deals</p>
+        <h2>{{ deals }}</h2>
+    </div>
+
+    <div class="metric-card">
+        <p>Open Pipeline Value</p>
+        <h2>£{{ "{:,.2f}".format(pipeline) }}</h2>
+    </div>
+
+    <div class="metric-card">
+        <p>Won Revenue</p>
+        <h2>£{{ "{:,.2f}".format(revenue) }}</h2>
+    </div>
+
+    <div class="metric-card">
+        <p>Win Rate</p>
+        <h2>{{ win_rate }}%</h2>
+    </div>
+
+</section>
+
+<section class="panel">
+
+    <div class="section-heading">
+        <h2>Recent Deals</h2>
+        <a href="{{ url_for('deals') }}">View all deals</a>
+    </div>
+
+    {% if recent_deals %}
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Deal</th>
+                    <th>Customer</th>
+                    <th>Value</th>
+                    <th>Stage</th>
+                    <th>Expected Close</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for deal in recent_deals %}
+                <tr>
+                    <td>{{ deal.deal_name }}</td>
+                    <td>{{ deal.company_name }}</td>
+                    <td>£{{ "{:,.2f}".format(deal.deal_value) }}</td>
+                    <td>
+                        <span class="stage">{{ deal.stage }}</span>
+                    </td>
+                    <td>{{ deal.expected_close_date or "Not set" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <p class="empty-state">
+        No deals have been recorded yet. Create your first deal to get started.
+    </p>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

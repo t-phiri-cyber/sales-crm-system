@@ -1,0 +1,108 @@
+﻿{% extends "base.html" %}
+
+{% block title %}
+    {% if deal %}Edit Deal{% else %}Create Deal{% endif %} | Sales CRM
+{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <h1>{% if deal %}Edit Deal{% else %}Create Deal{% endif %}</h1>
+        <p>Enter the opportunity details and sales stage.</p>
+    </div>
+
+    <a href="{{ url_for('deals') }}" class="btn secondary">
+        Back to Pipeline
+    </a>
+</div>
+
+<section class="panel form-panel">
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label for="customer_id">Customer *</label>
+                <select id="customer_id" name="customer_id" required>
+                    <option value="">Select a customer</option>
+
+                    {% for customer in customers %}
+                    <option value="{{ customer.id }}"
+                        {% if deal and deal.customer_id == customer.id %}selected{% endif %}>
+                        {{ customer.company_name }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="deal_name">Deal Name *</label>
+                <input
+                    type="text"
+                    id="deal_name"
+                    name="deal_name"
+                    maxlength="150"
+                    required
+                    value="{{ deal.deal_name if deal else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="deal_value">Deal Value (£) *</label>
+                <input
+                    type="number"
+                    id="deal_value"
+                    name="deal_value"
+                    min="0"
+                    max="999999999"
+                    step="0.01"
+                    required
+                    value="{{ deal.deal_value if deal else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="stage">Sales Stage *</label>
+                <select id="stage" name="stage" required>
+
+                    {% for stage in stages %}
+                    <option value="{{ stage }}"
+                        {% if deal and deal.stage == stage %}selected{% elif not deal and stage == 'Lead' %}selected{% endif %}>
+                        {{ stage }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="expected_close_date">Expected Closing Date</label>
+                <input
+                    type="date"
+                    id="expected_close_date"
+                    name="expected_close_date"
+                    value="{{ deal.expected_close_date if deal and deal.expected_close_date else '' }}"
+                >
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">
+                {% if deal %}Save Changes{% else %}Create Deal{% endif %}
+            </button>
+
+            <a href="{{ url_for('deals') }}" class="btn secondary">
+                Cancel
+            </a>
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}
